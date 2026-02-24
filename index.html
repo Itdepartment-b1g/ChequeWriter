@@ -23,6 +23,7 @@
       :root {
         --calib-x: 0mm;
         --calib-y: 0mm;
+        --win-x: 0mm;
         --blue: #2563eb;
         --blue-dark: #1d4ed8;
         --gray-50: #f9fafb;
@@ -33,6 +34,39 @@
         --gray-500: #6b7280;
         --gray-700: #374151;
         --gray-800: #1f2937;
+      }
+
+      /* Windows Mode Toggle */
+      .win-mode-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.6rem 0.75rem;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 0.4rem;
+        margin-bottom: 0.75rem;
+      }
+      .win-mode-row label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #1e40af;
+        cursor: pointer;
+      }
+      .win-mode-row input[type="checkbox"] {
+        width: 1rem;
+        height: 1rem;
+        accent-color: var(--blue);
+        cursor: pointer;
+      }
+      .win-offset-row {
+        display: none;
+      }
+      .win-offset-row.visible {
+        display: block;
       }
 
       body {
@@ -502,7 +536,7 @@
           padding: 0;
           border: none;
           box-shadow: none;
-          transform: translate(var(--calib-x), var(--calib-y));
+          transform: translate(calc(var(--calib-x) + var(--win-x)), var(--calib-y));
         }
 
         .p-text {
@@ -605,7 +639,29 @@
             />
           </div>
 
-          <!-- CALIBRATION -->
+          <!-- Windows Mode Toggle (always visible) -->
+          <div class="win-mode-row" style="margin-top: 0.5rem;">
+            <label for="chk-winmode">
+              <svg width="13" height="13" fill="none" stroke="#1e40af" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+              Windows / Non-Mac Mode
+            </label>
+            <input type="checkbox" id="chk-winmode" onchange="toggleWinMode()" />
+          </div>
+          <div class="slider-row win-offset-row" id="win-offset-row" style="margin-top: 0.5rem;">
+            <div class="slider-label">
+              <span>Windows Horizontal Offset</span>
+              <span id="lbl-win-x">+10 mm</span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="30"
+              step="1"
+              value="10"
+              id="sl-win-x"
+              oninput="updateWinOffset()"
+            />
+          </div>
           <div class="calib-panel" id="calib-panel" style="display: none">
             <h3>
               <svg
@@ -922,6 +978,37 @@
         panel.style.display = panel.style.display === "none" ? "block" : "none";
       }
 
+      /* ===================== WINDOWS MODE ===================== */
+      function toggleWinMode() {
+        const enabled = document.getElementById("chk-winmode").checked;
+        const row = document.getElementById("win-offset-row");
+        row.classList.toggle("visible", enabled);
+        localStorage.setItem("winMode", enabled ? "1" : "0");
+        updateWinOffset();
+      }
+
+      function updateWinOffset() {
+        const enabled = document.getElementById("chk-winmode").checked;
+        const val = document.getElementById("sl-win-x").value;
+        document.getElementById("lbl-win-x").textContent = "+" + val + " mm";
+        const offset = enabled ? val + "mm" : "0mm";
+        document.documentElement.style.setProperty("--win-x", offset);
+        localStorage.setItem("winOffset", val);
+      }
+
+      function initWinMode() {
+        const saved = localStorage.getItem("winMode") === "1";
+        const savedOffset = localStorage.getItem("winOffset") || "10";
+        const chk = document.getElementById("chk-winmode");
+        const sl = document.getElementById("sl-win-x");
+        chk.checked = saved;
+        sl.value = savedOffset;
+        document.getElementById("lbl-win-x").textContent = "+" + savedOffset + " mm";
+        document.getElementById("win-offset-row").classList.toggle("visible", saved);
+        const offset = saved ? savedOffset + "mm" : "0mm";
+        document.documentElement.style.setProperty("--win-x", offset);
+      }
+
       /* ===================== PRINT ===================== */
       function handlePrint() {
         const x = document.getElementById("sl-x").value;
@@ -933,6 +1020,7 @@
 
       /* Init */
       update();
+      initWinMode();
     </script>
   </body>
 </html>
