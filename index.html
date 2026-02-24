@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Philippine Check Writer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ===================== RESET & BASE ===================== */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --calib-x: 0mm;
+        --calib-y: 0mm;
+        --blue: #2563eb;
+        --blue-dark: #1d4ed8;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background: var(--gray-100);
+        min-height: 100vh;
+        padding: 2rem;
+        color: var(--gray-800);
+      }
+
+      /* ===================== LAYOUT ===================== */
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: var(--gray-800);
+      }
+
+      .header p {
+        font-size: 0.875rem;
+        color: var(--gray-500);
+        margin-top: 0.25rem;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition:
+          background 0.15s,
+          box-shadow 0.15s;
+      }
+
+      .btn-outline {
+        background: white;
+        border: 1px solid var(--gray-300);
+        color: var(--gray-700);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+      .btn-outline:hover {
+        background: var(--gray-50);
+      }
+
+      .btn-primary {
+        background: var(--blue);
+        color: white;
+        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
+        padding: 0.5rem 1.5rem;
+      }
+      .btn-primary:hover {
+        background: var(--blue-dark);
+      }
+
+      .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2rem;
+      }
+
+      @media (max-width: 768px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ===================== FORM CARD ===================== */
+      .card {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow:
+          0 1px 3px rgba(0, 0, 0, 0.07),
+          0 1px 2px rgba(0, 0, 0, 0.04);
+        border: 1px solid var(--gray-100);
+        padding: 1.5rem;
+      }
+
+      .card h2 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--gray-800);
+      }
+
+      .card h2 svg {
+        color: var(--blue);
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--gray-700);
+        margin-bottom: 0.25rem;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--gray-300);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        outline: none;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+        font-family: inherit;
+      }
+
+      .form-group input:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      }
+
+      .form-hint {
+        font-size: 0.75rem;
+        color: var(--gray-400);
+        margin-top: 0.25rem;
+      }
+
+      /* ===================== CALIBRATION ===================== */
+      .calib-panel {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: var(--gray-50);
+        border-radius: 0.5rem;
+        border: 1px solid var(--gray-200);
+      }
+
+      .calib-panel h3 {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .calib-panel p {
+        font-size: 0.7rem;
+        color: var(--gray-500);
+        margin-bottom: 1rem;
+        padding-bottom: 0.625rem;
+        border-bottom: 1px solid var(--gray-200);
+      }
+
+      .slider-row {
+        margin-bottom: 1rem;
+      }
+
+      .slider-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: var(--gray-700);
+        margin-bottom: 0.25rem;
+      }
+
+      .slider-label span:last-child {
+        font-family: "Courier Prime", monospace;
+        font-weight: 700;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        cursor: pointer;
+      }
+
+      /* ===================== PREVIEW ===================== */
+      .preview-card {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+        border: 1px solid var(--gray-100);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .preview-label {
+        font-size: 0.75rem;
+        color: var(--gray-400);
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        width: 100%;
+        text-align: center;
+      }
+
+      .mock-check {
+        position: relative;
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        max-width: 8in;
+        aspect-ratio: 8 / 3;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+      }
+
+      .mock-watermark {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: serif;
+        font-size: 3rem;
+        font-weight: 700;
+        color: rgba(0, 0, 0, 0.03);
+        pointer-events: none;
+        letter-spacing: -0.05em;
+        white-space: nowrap;
+      }
+
+      /* DATE ROW */
+      .check-date-row {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-start;
+        position: relative;
+        z-index: 1;
+      }
+
+      .date-inner {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .date-label-text {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: rgba(107, 114, 128, 0.8);
+        letter-spacing: 0.05em;
+      }
+
+      .date-boxes {
+        display: flex;
+        gap: 0.2rem;
+        font-family: "Courier Prime", monospace;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+      }
+
+      .date-box {
+        width: 1.5rem;
+        height: 2rem;
+        border: 1px solid var(--gray-300);
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+
+      .date-sep {
+        padding-top: 0.5rem;
+        color: var(--gray-400);
+        font-size: 0.9rem;
+      }
+
+      /* PAYEE ROW */
+      .check-payee-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 0.5rem;
+        width: 100%;
+        margin-top: 1rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .payee-block {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .payee-inner {
+        display: flex;
+        align-items: flex-end;
+        border-bottom: 1px solid var(--gray-400);
+        padding-bottom: 0.25rem;
+      }
+
+      .payee-label-text {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: rgba(107, 114, 128, 0.8);
+        margin-right: 1rem;
+        line-height: 1.3;
+        min-width: 6rem;
+      }
+
+      .payee-value {
+        font-family: "Courier Prime", monospace;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        padding-bottom: 0.25rem;
+        min-width: 200px;
+      }
+
+      .amount-box {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-bottom: 1px solid var(--gray-400);
+        padding-bottom: 0.25rem;
+        min-width: 200px;
+      }
+
+      .peso-symbol {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: rgba(107, 114, 128, 0.8);
+      }
+
+      .amount-field {
+        background: white;
+        padding: 0.4rem 0.5rem;
+        border: 1px solid var(--gray-300);
+        width: 180px;
+        height: 40px;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+        text-align: right;
+        font-family: "Courier Prime", monospace;
+        font-weight: 700;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      /* WORDS ROW */
+      .check-words-row {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        margin-top: 1rem;
+        gap: 1rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .words-inner {
+        display: flex;
+        align-items: flex-end;
+        border-bottom: 1px solid var(--gray-400);
+        padding-bottom: 0.25rem;
+      }
+
+      .pesos-label-text {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: rgba(107, 114, 128, 0.8);
+        margin-right: 0.5rem;
+      }
+
+      .words-value {
+        font-family: "Courier Prime", monospace;
+        font-size: 0.85rem;
+        font-weight: 700;
+        line-height: 1.2;
+        padding: 0 0.5rem;
+      }
+
+      .sigs-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: auto;
+      }
+
+      .sig-box {
+        width: 12rem;
+        height: 3rem;
+        border: 1px solid var(--gray-300);
+        background: white;
+        opacity: 0.5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.625rem;
+        color: var(--gray-400);
+      }
+
+      /* Hide print area on screen only */
+      @media screen {
+        #print-area { display: none; }
+      }
+
+      /* ===================== PRINT STYLES ===================== */
+      @media print {
+        @page {
+          size: 9.5in 4.125in landscape;
+          margin: 0 !important;
+        }
+
+        body {
+          background: white;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+          padding: 0;
+        }
+
+        body * {
+          visibility: hidden;
+        }
+
+        #print-area,
+        #print-area * {
+          visibility: visible;
+        }
+
+        #print-area {
+          display: block !important;
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 9.5in;
+          height: 4.125in;
+          margin: 0;
+          margin-top: 0.8in;
+          padding: 0;
+          border: none;
+          box-shadow: none;
+          transform: translate(var(--calib-x), var(--calib-y));
+        }
+
+        .p-text {
+          position: absolute;
+          font-size: 11pt;
+          font-family: "Courier New", Courier, monospace;
+          font-weight: 600;
+          color: black;
+          white-space: nowrap;
+          line-height: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- HEADER -->
+      <div class="header">
+        <div>
+          <h1>Philippine Check Writer</h1>
+          <p>PCHC Compliant formatting for Envelope #10</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" onclick="toggleCalib()">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+              />
+            </svg>
+            Printer Settings
+          </button>
+          <button class="btn btn-primary" onclick="handlePrint()">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <polyline points="6 9 6 2 18 2 18 9" />
+              <path
+                d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+              />
+              <rect x="6" y="14" width="12" height="8" />
+            </svg>
+            Print Check
+          </button>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <!-- FORM -->
+        <div class="card">
+          <h2>
+            <svg
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+            Check Details
+          </h2>
+
+          <div class="form-group">
+            <label>Issue Date</label>
+            <input
+              type="date"
+              id="inp-date"
+              value=""
+              oninput="update()"
+            />
+            <p class="form-hint">Required format: MM-DD-YYYY</p>
+          </div>
+
+          <div class="form-group">
+            <label>Payee Name</label>
+            <input
+              type="text"
+              id="inp-payee"
+              value=""
+              placeholder="Juan Dela Cruz"
+              oninput="update()"
+              style="
+                font-family: &quot;Courier Prime&quot;, monospace;
+                letter-spacing: 0.08em;
+              "
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Amount (PHP)</label>
+            <input
+              type="text"
+              id="inp-amount"
+              value=""
+              placeholder="1000.00"
+              oninput="update()"
+              style="
+                text-align: left;
+                font-family: &quot;Courier Prime&quot;, monospace;
+              "
+            />
+          </div>
+
+          <!-- CALIBRATION -->
+          <div class="calib-panel" id="calib-panel" style="display: none">
+            <h3>
+              <svg
+                width="13"
+                height="13"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="12" cy="12" r="3" />
+                <path
+                  d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+                />
+              </svg>
+              Global Offset Calibration
+            </h3>
+            <p>
+              Adjust these sliders to nudge the printed text up/down or
+              left/right. 1mm corresponds roughly to moving one pixel line.
+            </p>
+
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Horizontal Offset (X)</span>
+                <span id="lbl-x">0 mm</span>
+              </div>
+              <input
+                type="range"
+                min="-30"
+                max="30"
+                step="1"
+                value="0"
+                id="sl-x"
+                oninput="updateCalib()"
+              />
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Vertical Offset (Y)</span>
+                <span id="lbl-y">0 mm</span>
+              </div>
+              <input
+                type="range"
+                min="-30"
+                max="30"
+                step="1"
+                value="0"
+                id="sl-y"
+                oninput="updateCalib()"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="preview-card">
+          <div class="preview-label">Live Digital Preview</div>
+
+          <div class="mock-check">
+            <div class="mock-watermark">UNIONBANK UNIONBANK UNIONBANK</div>
+
+            <!-- Date Row -->
+            <div class="check-date-row">
+              <div class="date-inner">
+                <span class="date-label-text">DATE</span>
+                <div class="date-boxes" id="preview-date">
+                  <!-- filled by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Payee + Amount -->
+            <div class="check-payee-row">
+              <div class="payee-block">
+                <div class="payee-inner">
+                  <span class="payee-label-text">PAY TO THE<br />ORDER OF</span>
+                  <span class="payee-value" id="preview-payee"></span>
+                </div>
+              </div>
+              <div class="amount-box">
+                <span class="peso-symbol">₱</span>
+                <div class="amount-field" id="preview-amount"></div>
+              </div>
+            </div>
+
+            <!-- Words row -->
+            <div class="check-words-row">
+              <div class="words-inner">
+                <span class="pesos-label-text">PESOS</span>
+                <span class="words-value" id="preview-words"></span>
+              </div>
+              <div class="sigs-row">
+                <div class="sig-box">SIGNATURE 1</div>
+                <div class="sig-box">SIGNATURE 2</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== PRINT AREA ===================== -->
+    <div id="print-area">
+      <!-- DATE -->
+      <div
+        class="p-text"
+        id="pt-mm"
+        style="top: 10.4mm; left: 5.95in; letter-spacing: 0.1in"
+      ></div>
+      <div
+        class="p-text"
+        id="pt-dd"
+        style="top: 10.4mm; left: 6.4in; letter-spacing: 0.1in"
+      ></div>
+      <div
+        class="p-text"
+        id="pt-yyyy"
+        style="top: 10.4mm; left: 6.85in; letter-spacing: 0.1in"
+      ></div>
+
+      <!-- PAYEE -->
+      <div class="p-text" id="pt-payee" style="top: 19.4mm; left: 1.2in"></div>
+
+      <!-- AMOUNT NUMBERS (DO NOT TOUCH) -->
+      <div
+        class="p-text"
+        id="pt-amount"
+        style="top: 19.5mm; left: 5.5in; width: 1.8in; text-align: right"
+      ></div>
+
+      <!-- AMOUNT IN WORDS -->
+      <div
+        class="p-text"
+        id="pt-words"
+        style="top: 27.4mm; left: 1.2in; width: 7.5in; font-size: 9pt"
+      ></div>
+    </div>
+
+    <script>
+      /* ===================== NUMBER TO WORDS ===================== */
+      function numberToWords(amount) {
+        const num = parseFloat(amount);
+        if (isNaN(num) || num < 0) return "";
+        if (num === 0) return "Zero Pesos";
+
+        const ones = [
+          "",
+          "One",
+          "Two",
+          "Three",
+          "Four",
+          "Five",
+          "Six",
+          "Seven",
+          "Eight",
+          "Nine",
+          "Ten",
+          "Eleven",
+          "Twelve",
+          "Thirteen",
+          "Fourteen",
+          "Fifteen",
+          "Sixteen",
+          "Seventeen",
+          "Eighteen",
+          "Nineteen",
+        ];
+        const tens_ = [
+          "",
+          "",
+          "Twenty",
+          "Thirty",
+          "Forty",
+          "Fifty",
+          "Sixty",
+          "Seventy",
+          "Eighty",
+          "Ninety",
+        ];
+        const scales = ["", "Thousand", "Million", "Billion", "Trillion"];
+
+        function convertLessThan1000(n) {
+          let word = "";
+          if (n % 100 < 20) {
+            word = ones[n % 100];
+            n = Math.floor(n / 100);
+          } else {
+            word = ones[n % 10];
+            n = Math.floor(n / 10);
+            word = tens_[n % 10] + (word ? " " + word : "");
+            n = Math.floor(n / 10);
+          }
+          if (n > 0) word = ones[n] + " Hundred" + (word ? " " + word : "");
+          return word;
+        }
+
+        const parts = num.toFixed(2).split(".");
+        let whole = parseInt(parts[0], 10);
+        const cents = parseInt(parts[1], 10);
+
+        if (whole === 0)
+          return `Zero Pesos and ${String(cents).padStart(2, "0")}/100`;
+
+        let word = "";
+        let si = 0;
+        while (whole > 0) {
+          if (whole % 1000 !== 0) {
+            word =
+              convertLessThan1000(whole % 1000) +
+              (scales[si] ? " " + scales[si] : "") +
+              (word ? " " + word : "");
+          }
+          whole = Math.floor(whole / 1000);
+          si++;
+        }
+
+        const centsFraction =
+          cents > 0 ? ` and ${String(cents).padStart(2, "0")}/100` : " Pesos Only";
+        return `${word.trim()}${centsFraction}`;
+      }
+
+      /* ===================== HELPERS ===================== */
+      function formatAmount(str) {
+        const n = parseFloat(str.replace(/,/g, ""));
+        if (isNaN(n)) return "";
+        return new Intl.NumberFormat("en-PH", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(n);
+      }
+
+      function parseDate(val) {
+        // expects YYYY-MM-DD
+        if (!val || val.length < 10) return Array(8).fill("");
+        return [
+          val[5],
+          val[6], // MM
+          val[8],
+          val[9], // DD
+          val[0],
+          val[1],
+          val[2],
+          val[3], // YYYY
+        ];
+      }
+
+      function makeDateBoxes(digits) {
+        let html = "";
+        digits.forEach((d, i) => {
+          html += `<div class="date-box">${d}</div>`;
+          if (i === 1 || i === 3) html += `<span class="date-sep">-</span>`;
+        });
+        return html;
+      }
+
+      /* ===================== UPDATE ===================== */
+      function update() {
+        const dateVal = document.getElementById("inp-date").value;
+        const payeeVal = document
+          .getElementById("inp-payee")
+          .value.toUpperCase();
+        const amountVal = document.getElementById("inp-amount").value;
+
+        // sync payee input to uppercase
+        document.getElementById("inp-payee").value = payeeVal;
+
+        const digits = parseDate(dateVal);
+        const fmtAmount = formatAmount(amountVal);
+        const amountNum = parseFloat(amountVal.replace(/,/g, ""));
+        const words = !isNaN(amountNum)
+          ? `**${numberToWords(amountNum)}**`
+          : "";
+        const wordsPlain = !isNaN(amountNum) ? numberToWords(amountNum) : "";
+        const securePayee = payeeVal.length > 0 ? `**${payeeVal}**` : "";
+        const payeePlain = payeeVal;
+
+        /* --- PREVIEW --- */
+        document.getElementById("preview-date").innerHTML =
+          makeDateBoxes(digits);
+        document.getElementById("preview-payee").textContent = payeeVal
+          ? `**${payeeVal}**`
+          : "";
+        document.getElementById("preview-amount").textContent = fmtAmount;
+        document.getElementById("preview-words").textContent = words;
+
+        /* --- PRINT --- */
+        const mm = digits[0] + digits[1];
+        const dd = digits[2] + digits[3];
+        const yyyy = digits[4] + digits[5] + digits[6] + digits[7];
+        document.getElementById("pt-mm").textContent = mm;
+        document.getElementById("pt-dd").textContent = dd;
+        document.getElementById("pt-yyyy").textContent = yyyy;
+        document.getElementById("pt-payee").textContent = securePayee;
+        document.getElementById("pt-amount").textContent = fmtAmount;
+        document.getElementById("pt-words").textContent = words;
+      }
+
+      /* ===================== CALIBRATION ===================== */
+      function updateCalib() {
+        const x = document.getElementById("sl-x").value;
+        const y = document.getElementById("sl-y").value;
+        document.getElementById("lbl-x").textContent =
+          (x > 0 ? "+" : "") + x + " mm";
+        document.getElementById("lbl-y").textContent =
+          (y > 0 ? "+" : "") + y + " mm";
+        document.documentElement.style.setProperty("--calib-x", x + "mm");
+        document.documentElement.style.setProperty("--calib-y", y + "mm");
+      }
+
+      function toggleCalib() {
+        const panel = document.getElementById("calib-panel");
+        panel.style.display = panel.style.display === "none" ? "block" : "none";
+      }
+
+      /* ===================== PRINT ===================== */
+      function handlePrint() {
+        const x = document.getElementById("sl-x").value;
+        const y = document.getElementById("sl-y").value;
+        document.documentElement.style.setProperty("--calib-x", x + "mm");
+        document.documentElement.style.setProperty("--calib-y", y + "mm");
+        window.print();
+      }
+
+      /* Init */
+      update();
+    </script>
+  </body>
+</html>
