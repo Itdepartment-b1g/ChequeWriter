@@ -798,7 +798,7 @@
       <div
         class="p-text"
         id="pt-words"
-        style="top: 22.10mm; left: 1.57in; width: 7.5in; font-size: 9pt"
+        style="top: 22.10mm; left: 1.57in; width: 7.5in; font-size: 8pt; white-space: normal; line-height: 1.4"
       ></div>
     </div>
 
@@ -934,17 +934,17 @@
         const fmtAmount = formatAmount(amountVal);
         const amountNum = parseFloat(amountVal.replace(/,/g, ""));
         const words = !isNaN(amountNum)
-          ? `**${numberToWords(amountNum)}**`
+          ? `${numberToWords(amountNum)}`
           : "";
         const wordsPlain = !isNaN(amountNum) ? numberToWords(amountNum) : "";
-        const securePayee = payeeVal.length > 0 ? `**${payeeVal}**` : "";
+        const securePayee = payeeVal.length > 0 ? `${payeeVal}` : "";
         const payeePlain = payeeVal;
 
         /* --- PREVIEW --- */
         document.getElementById("preview-date").innerHTML =
           makeDateBoxes(digits);
         document.getElementById("preview-payee").textContent = payeeVal
-          ? `**${payeeVal}**`
+          ? `${payeeVal}`
           : "";
         document.getElementById("preview-amount").textContent = fmtAmount;
         document.getElementById("preview-words").textContent = words;
